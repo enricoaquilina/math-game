@@ -12,15 +12,16 @@
     width: 20%;
     float: left;
     text-align:center;
+    margin-top: 70px;
 }
 
 #stars-frame .well, 
 #answer-frame .well, 
 #numbers-frame .well {
-    height: 150px;
+    height: 200px;
 }
 
-#numbers-frame .number {
+#numbers-frame .number, #answers-frame .well span {
     display: inline-block;
     margin: 0.5em;
     background-color: #bbb;
@@ -35,3 +36,8 @@
     background-color: aqua;
 }
 
+#numbers-frame .selected-true{
+    background-color: #e8e8e8;
+    color: #ddd;
+    cursor: not-allowed;
+}

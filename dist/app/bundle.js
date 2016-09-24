@@ -47,7 +47,7 @@
   \**************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
@@ -75,16 +75,25 @@
 	    }
 	
 	    _createClass(App, [{
-	        key: 'render',
+	        key: "render",
 	        value: function render() {
 	            return _react2.default.createElement(
-	                'div',
-	                null,
+	                "div",
+	                { id: "game" },
 	                _react2.default.createElement(
-	                    'h1',
+	                    "h2",
 	                    null,
-	                    'Hello World!'
-	                )
+	                    "Algebra 4 Kids"
+	                ),
+	                _react2.default.createElement("hr", null),
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "clearfix" },
+	                    _react2.default.createElement(Star, null),
+	                    _react2.default.createElement(Button, null),
+	                    _react2.default.createElement(Answer, null)
+	                ),
+	                _react2.default.createElement(Numbers, null)
 	            );
 	        }
 	    }]);
@@ -92,7 +101,125 @@
 	    return App;
 	}(_react2.default.Component);
 	
-	(0, _reactDom.render)(_react2.default.createElement(App, null), document.getElementById('app'));
+	var Star = function (_React$Component2) {
+	    _inherits(Star, _React$Component2);
+	
+	    function Star() {
+	        _classCallCheck(this, Star);
+	
+	        return _possibleConstructorReturn(this, (Star.__proto__ || Object.getPrototypeOf(Star)).apply(this, arguments));
+	    }
+	
+	    _createClass(Star, [{
+	        key: "render",
+	        value: function render() {
+	            var noOfStars = Math.floor(Math.random() * 9) + 1;
+	
+	            var stars = [];
+	            for (var i = 0; i < noOfStars; i++) {
+	                stars.push(_react2.default.createElement("span", { className: "glyphicon glyphicon-star" }));
+	            }
+	            return _react2.default.createElement(
+	                "div",
+	                { id: "stars-frame" },
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "well" },
+	                    stars
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Star;
+	}(_react2.default.Component);
+	
+	var Button = function (_React$Component3) {
+	    _inherits(Button, _React$Component3);
+	
+	    function Button() {
+	        _classCallCheck(this, Button);
+	
+	        return _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).apply(this, arguments));
+	    }
+	
+	    _createClass(Button, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
+	                { id: "button-frame" },
+	                _react2.default.createElement(
+	                    "button",
+	                    { className: "btn btn-primary" },
+	                    "="
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Button;
+	}(_react2.default.Component);
+	
+	var Answer = function (_React$Component4) {
+	    _inherits(Answer, _React$Component4);
+	
+	    function Answer() {
+	        _classCallCheck(this, Answer);
+	
+	        return _possibleConstructorReturn(this, (Answer.__proto__ || Object.getPrototypeOf(Answer)).apply(this, arguments));
+	    }
+	
+	    _createClass(Answer, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
+	                { id: "answer-frame" },
+	                _react2.default.createElement(
+	                    "div",
+	                    { className: "well" },
+	                    _react2.default.createElement("input", { className: "form-control", type: "text" })
+	                )
+	            );
+	        }
+	    }]);
+	
+	    return Answer;
+	}(_react2.default.Component);
+	
+	var Numbers = function (_React$Component5) {
+	    _inherits(Numbers, _React$Component5);
+	
+	    function Numbers() {
+	        _classCallCheck(this, Numbers);
+	
+	        return _possibleConstructorReturn(this, (Numbers.__proto__ || Object.getPrototypeOf(Numbers)).apply(this, arguments));
+	    }
+	
+	    _createClass(Numbers, [{
+	        key: "render",
+	        value: function render() {
+	            var nos = [];
+	            for (var i = 0; i < 9; i++) {
+	                nos.push(_react2.default.createElement(
+	                    "div",
+	                    { className: "number" },
+	                    i + 1
+	                ));
+	            }
+	            return _react2.default.createElement(
+	                "div",
+	                { id: "numbers-frame", className: "well" },
+	                nos
+	            );
+	        }
+	    }]);
+	
+	    return Numbers;
+	}(_react2.default.Component);
+	
+	(0, _reactDom.render)(_react2.default.createElement(App, null), document.getElementById('container'));
 
 /***/ },
 /* 1 */
