@@ -47,7 +47,7 @@
   \**************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	    value: true
@@ -92,6 +92,15 @@
 	            _this.setState({ selectedNumbers: selectedNos });
 	        };
 	
+	        _this.verifyAnswer = function (e) {
+	            var sum = _this.state.selectedNumbers.reduce(function (a, b) {
+	                return a + b;
+	            }, 0);
+	            if (sum === _this.state.noOfStars) {
+	                console.log('wowweeee');
+	            }
+	        };
+	
 	        _this.state = {
 	            selectedNumbers: [],
 	            noOfStars: Math.floor(Math.random() * 9) + 1
@@ -100,23 +109,22 @@
 	    }
 	
 	    _createClass(App, [{
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
 	            return _react2.default.createElement(
-	                "div",
-	                { id: "game" },
+	                'div',
+	                { id: 'game' },
 	                _react2.default.createElement(
-	                    "h2",
+	                    'h2',
 	                    null,
-	                    "Algebra 4 Kids"
+	                    'Algebra 4 Kids'
 	                ),
-	                _react2.default.createElement("hr", null),
+	                _react2.default.createElement('hr', null),
 	                _react2.default.createElement(
-	                    "div",
-	                    { className: "clearfix" },
+	                    'div',
+	                    { className: 'clearfix' },
 	                    _react2.default.createElement(Star, { noOfStars: this.state.noOfStars }),
-	                    _react2.default.createElement(Button, null),
-	                    _react2.default.createElement(ReDraw, null),
+	                    _react2.default.createElement(Button, { verifyAnswer: this.verifyAnswer }),
 	                    _react2.default.createElement(Answer, { selectedNumbers: this.state.selectedNumbers, removeNumber: this.removeNumber })
 	                ),
 	                _react2.default.createElement(Numbers, { selectedNumbers: this.state.selectedNumbers, addNumber: this.addNumber })
@@ -137,20 +145,20 @@
 	    }
 	
 	    _createClass(Star, [{
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
 	            var stars = [],
 	                noOfStars = this.props.noOfStars;
 	
 	            for (var i = 0; i < noOfStars; i++) {
-	                stars.push(_react2.default.createElement("span", { key: i, className: "glyphicon glyphicon-star" }));
+	                stars.push(_react2.default.createElement('span', { key: i, className: 'glyphicon glyphicon-star' }));
 	            }
 	            return _react2.default.createElement(
-	                "div",
-	                { id: "stars-frame" },
+	                'div',
+	                { id: 'stars-frame' },
 	                _react2.default.createElement(
-	                    "div",
-	                    { className: "well" },
+	                    'div',
+	                    { className: 'well' },
 	                    stars
 	                )
 	            );
@@ -170,15 +178,17 @@
 	    }
 	
 	    _createClass(Button, [{
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
+	            var checkAnswer = this.props.verifyAnswer;
+	
 	            return _react2.default.createElement(
-	                "div",
-	                { id: "button-frame" },
+	                'div',
+	                { id: 'button-frame' },
 	                _react2.default.createElement(
-	                    "button",
-	                    { className: "btn btn-primary" },
-	                    "="
+	                    'button',
+	                    { className: 'btn btn-primary', onClick: checkAnswer() },
+	                    '='
 	                )
 	            );
 	        }
@@ -197,12 +207,13 @@
 	    }
 	
 	    _createClass(ReDraw, [{
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
+	
 	            return _react2.default.createElement(
-	                "div",
-	                { id: "redraw-frame" },
-	                _react2.default.createElement("span", { className: "glyphicon glyphicon-refresh" })
+	                'div',
+	                { id: 'redraw-frame' },
+	                _react2.default.createElement('span', { className: 'glyphicon glyphicon-refresh btn btn-warning' })
 	            );
 	        }
 	    }]);
@@ -220,7 +231,7 @@
 	    }
 	
 	    _createClass(Answer, [{
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
 	            var className = "",
 	                nos = [],
@@ -231,7 +242,7 @@
 	                selectedNos.map(function (result, i) {
 	                    className = "number selected-" + (selectedNos.indexOf(result) >= 0);
 	                    nos.push(_react2.default.createElement(
-	                        "span",
+	                        'span',
 	                        { onClick: removeNumber.bind(null, result), key: i },
 	                        result
 	                    ));
@@ -239,11 +250,11 @@
 	            }
 	
 	            return _react2.default.createElement(
-	                "div",
-	                { id: "answer-frame" },
+	                'div',
+	                { id: 'answer-frame' },
 	                _react2.default.createElement(
-	                    "div",
-	                    { className: "well" },
+	                    'div',
+	                    { className: 'well' },
 	                    nos
 	                )
 	            );
@@ -263,7 +274,7 @@
 	    }
 	
 	    _createClass(Numbers, [{
-	        key: "render",
+	        key: 'render',
 	        value: function render() {
 	            var nos = [],
 	                className = "",
@@ -273,15 +284,15 @@
 	            for (var i = 1; i < 10; i++) {
 	                className = "number selected-" + (selectedNos.indexOf(i) >= 0);
 	                nos.push(_react2.default.createElement(
-	                    "span",
+	                    'span',
 	                    { className: className, onClick: addNumber.bind(null, i), key: i },
 	                    i
 	                ));
 	            }
 	
 	            return _react2.default.createElement(
-	                "div",
-	                { id: "numbers-frame", className: "well" },
+	                'div',
+	                { id: 'numbers-frame', className: 'well' },
 	                nos
 	            );
 	        }
