@@ -49,6 +49,11 @@
 
 	"use strict";
 	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.App = undefined;
+	
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 	
 	var _react = __webpack_require__(/*! react */ 1);
@@ -65,13 +70,33 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var App = function (_React$Component) {
+	var App = exports.App = function (_React$Component) {
 	    _inherits(App, _React$Component);
 	
 	    function App() {
 	        _classCallCheck(this, App);
 	
-	        return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
+	        var _this = _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this));
+	
+	        _this.addNumber = function (clickedNumber) {
+	            if (_this.state.selectedNumbers.indexOf(clickedNumber) == -1) {
+	                _this.setState({ selectedNumbers: _this.state.selectedNumbers.concat(clickedNumber) });
+	            }
+	        };
+	
+	        _this.removeNumber = function (clickedNumber) {
+	            var selectedNos = _this.state.selectedNumbers,
+	                indexOfNumber = selectedNos.indexOf(clickedNumber);
+	
+	            selectedNos.splice(indexOfNumber, 1);
+	            _this.setState({ selectedNumbers: selectedNos });
+	        };
+	
+	        _this.state = {
+	            selectedNumbers: [],
+	            noOfStars: Math.floor(Math.random() * 9) + 1
+	        };
+	        return _this;
 	    }
 	
 	    _createClass(App, [{
@@ -89,11 +114,12 @@
 	                _react2.default.createElement(
 	                    "div",
 	                    { className: "clearfix" },
-	                    _react2.default.createElement(Star, null),
+	                    _react2.default.createElement(Star, { noOfStars: this.state.noOfStars }),
 	                    _react2.default.createElement(Button, null),
-	                    _react2.default.createElement(Answer, null)
+	                    _react2.default.createElement(ReDraw, null),
+	                    _react2.default.createElement(Answer, { selectedNumbers: this.state.selectedNumbers, removeNumber: this.removeNumber })
 	                ),
-	                _react2.default.createElement(Numbers, null)
+	                _react2.default.createElement(Numbers, { selectedNumbers: this.state.selectedNumbers, addNumber: this.addNumber })
 	            );
 	        }
 	    }]);
@@ -107,17 +133,17 @@
 	    function Star() {
 	        _classCallCheck(this, Star);
 	
-	        return _possibleConstructorReturn(this, (Star.__proto__ || Object.getPrototypeOf(Star)).apply(this, arguments));
+	        return _possibleConstructorReturn(this, (Star.__proto__ || Object.getPrototypeOf(Star)).call(this));
 	    }
 	
 	    _createClass(Star, [{
 	        key: "render",
 	        value: function render() {
-	            var noOfStars = Math.floor(Math.random() * 9) + 1;
+	            var stars = [],
+	                noOfStars = this.props.noOfStars;
 	
-	            var stars = [];
 	            for (var i = 0; i < noOfStars; i++) {
-	                stars.push(_react2.default.createElement("span", { className: "glyphicon glyphicon-star" }));
+	                stars.push(_react2.default.createElement("span", { key: i, className: "glyphicon glyphicon-star" }));
 	            }
 	            return _react2.default.createElement(
 	                "div",
@@ -140,7 +166,7 @@
 	    function Button() {
 	        _classCallCheck(this, Button);
 	
-	        return _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).apply(this, arguments));
+	        return _possibleConstructorReturn(this, (Button.__proto__ || Object.getPrototypeOf(Button)).call(this));
 	    }
 	
 	    _createClass(Button, [{
@@ -161,25 +187,64 @@
 	    return Button;
 	}(_react2.default.Component);
 	
-	var Answer = function (_React$Component4) {
-	    _inherits(Answer, _React$Component4);
+	var ReDraw = function (_React$Component4) {
+	    _inherits(ReDraw, _React$Component4);
+	
+	    function ReDraw() {
+	        _classCallCheck(this, ReDraw);
+	
+	        return _possibleConstructorReturn(this, (ReDraw.__proto__ || Object.getPrototypeOf(ReDraw)).call(this));
+	    }
+	
+	    _createClass(ReDraw, [{
+	        key: "render",
+	        value: function render() {
+	            return _react2.default.createElement(
+	                "div",
+	                { id: "redraw-frame" },
+	                _react2.default.createElement("span", { className: "glyphicon glyphicon-refresh" })
+	            );
+	        }
+	    }]);
+	
+	    return ReDraw;
+	}(_react2.default.Component);
+	
+	var Answer = function (_React$Component5) {
+	    _inherits(Answer, _React$Component5);
 	
 	    function Answer() {
 	        _classCallCheck(this, Answer);
 	
-	        return _possibleConstructorReturn(this, (Answer.__proto__ || Object.getPrototypeOf(Answer)).apply(this, arguments));
+	        return _possibleConstructorReturn(this, (Answer.__proto__ || Object.getPrototypeOf(Answer)).call(this));
 	    }
 	
 	    _createClass(Answer, [{
 	        key: "render",
 	        value: function render() {
+	            var className = "",
+	                nos = [],
+	                selectedNos = this.props.selectedNumbers,
+	                removeNumber = this.props.removeNumber;
+	
+	            {
+	                selectedNos.map(function (result, i) {
+	                    className = "number selected-" + (selectedNos.indexOf(result) >= 0);
+	                    nos.push(_react2.default.createElement(
+	                        "span",
+	                        { onClick: removeNumber.bind(null, result), key: i },
+	                        result
+	                    ));
+	                });
+	            }
+	
 	            return _react2.default.createElement(
 	                "div",
 	                { id: "answer-frame" },
 	                _react2.default.createElement(
 	                    "div",
 	                    { className: "well" },
-	                    _react2.default.createElement("input", { className: "form-control", type: "text" })
+	                    nos
 	                )
 	            );
 	        }
@@ -188,26 +253,32 @@
 	    return Answer;
 	}(_react2.default.Component);
 	
-	var Numbers = function (_React$Component5) {
-	    _inherits(Numbers, _React$Component5);
+	var Numbers = function (_React$Component6) {
+	    _inherits(Numbers, _React$Component6);
 	
 	    function Numbers() {
 	        _classCallCheck(this, Numbers);
 	
-	        return _possibleConstructorReturn(this, (Numbers.__proto__ || Object.getPrototypeOf(Numbers)).apply(this, arguments));
+	        return _possibleConstructorReturn(this, (Numbers.__proto__ || Object.getPrototypeOf(Numbers)).call(this));
 	    }
 	
 	    _createClass(Numbers, [{
 	        key: "render",
 	        value: function render() {
-	            var nos = [];
-	            for (var i = 0; i < 9; i++) {
+	            var nos = [],
+	                className = "",
+	                selectedNos = this.props.selectedNumbers,
+	                addNumber = this.props.addNumber;
+	
+	            for (var i = 1; i < 10; i++) {
+	                className = "number selected-" + (selectedNos.indexOf(i) >= 0);
 	                nos.push(_react2.default.createElement(
-	                    "div",
-	                    { className: "number" },
-	                    i + 1
+	                    "span",
+	                    { className: className, onClick: addNumber.bind(null, i), key: i },
+	                    i
 	                ));
 	            }
+	
 	            return _react2.default.createElement(
 	                "div",
 	                { id: "numbers-frame", className: "well" },

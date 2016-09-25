@@ -2,31 +2,21 @@ import React from "react";
 import {render} from 'react-dom';
 
 export class App extends React.Component {
-     constructor(props) {
-        super(props);
+     constructor() {
+        super();
         this.state = {
             selectedNumbers: [], 
             noOfStars: (Math.floor(Math.random()*9)+1) 
         };
-        // this.onChange = this.onChange.bind(this);
-
     }
-    addNumber(clickedNumber) {
-        this.setState({
-            selectedNumbers : this.state.selectedNumbers.concat(69)
-        })
-        // if(this.state.selectedNumbers.indexOf(clickedNumber) == -1){
-        //     this.setState(
-        //         { selectedNumbers: this.state.selectedNumbers.concat(clickedNumber) }
-        //     );
-        // }        
+    addNumber = (clickedNumber) => {
+        if(this.state.selectedNumbers.indexOf(clickedNumber) == -1){
+            this.setState(
+                { selectedNumbers: this.state.selectedNumbers.concat(clickedNumber) }
+            );
+        }        
     }
-    test(){
-        this.setState({
-            selectedNumbers : this.state.selectedNumbers.concat(1)
-        })
-    }
-    removeNumber(clickedNumber){
+    removeNumber = (clickedNumber) => {
         var selectedNos = this.state.selectedNumbers,
             indexOfNumber = selectedNos.indexOf(clickedNumber);
 
@@ -35,6 +25,12 @@ export class App extends React.Component {
             {selectedNumbers: selectedNos}
         );
     }
+    verifyAnswer = (e) => {
+        var sum = this.state.selectedNumbers.reduce( (a,b) => a+b, 0);
+        if(sum === this.state.noOfStars){
+            console.log('wowweeee')
+        }
+    }
     render() {
         return (
             <div id="game">
@@ -42,16 +38,20 @@ export class App extends React.Component {
                 <hr/>
                 <div className="clearfix">
                     <Star noOfStars={this.state.noOfStars} />
-                    <Button />
-                    <Answer selectedNumbers={this.state.selectedNumbers} removeNumber={this.removeNumber} />
+                    <Button verifyAnswer={this.verifyAnswer}/>
+                    {/*<ReDraw />*/}
+                    <Answer selectedNumbers={this.state.selectedNumbers} removeNumber={ this.removeNumber } />
                 </div>
-                <Numbers selectedNumbers={this.state.selectedNumbers} addNumber={this.test} />
+                <Numbers selectedNumbers={this.state.selectedNumbers} addNumber={ this.addNumber } />
             </div>
         );
     }
 }
 
 class Star extends React.Component {
+    constructor() {
+        super();
+    }
     render() {
         var stars = [],
             noOfStars = this.props.noOfStars;
@@ -72,25 +72,47 @@ class Star extends React.Component {
 }
 
 class Button extends React.Component {
+    constructor() {
+        super();
+    }
     render() {
+        var checkAnswer = this.props.verifyAnswer;
+
         return (
             <div id="button-frame">
-                <button className="btn btn-primary">=</button>
+                <button className="btn btn-primary" onClick={checkAnswer()}>=</button>
+            </div>
+        );
+    }
+}
+
+class ReDraw extends React.Component {
+    constructor() {
+        super();
+    }
+    render() {
+
+        return (
+            <div id="redraw-frame">
+                <span className="glyphicon glyphicon-refresh btn btn-warning"></span>
             </div>
         );
     }
 }
 
 class Answer extends React.Component {
+    constructor() {
+        super();
+    }
     render() {
         var className = "",
             nos = [], 
             selectedNos = this.props.selectedNumbers,
             removeNumber = this.props.removeNumber;
             
-        {selectedNos.map(function(result) {
+        {selectedNos.map(function(result, i) {
             className = "number selected-" + (selectedNos.indexOf(result)>=0); 
-            nos.push(<span onClick={removeNumber.bind(null, result)} key={result}>{result}</span>);
+            nos.push(<span onClick={removeNumber.bind(null, result)} key={i}>{result}</span>);
         })}
 
 
@@ -105,6 +127,9 @@ class Answer extends React.Component {
 }
 
 class Numbers extends React.Component {
+    constructor() {
+        super();
+    }
     render() {
         var nos = [], 
             className = "", 
@@ -115,7 +140,7 @@ class Numbers extends React.Component {
         for (var i = 1; i < 10; i++) {
             className = "number selected-" + (selectedNos.indexOf(i)>=0); 
             nos.push(
-                <span className="{className}" onClick={addNumber.bind(this)} key={i}>{i}</span>
+                <span className={className} onClick={ addNumber.bind(null, i) } key={i}>{i}</span>
             )
         }
 

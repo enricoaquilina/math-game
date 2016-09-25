@@ -21,7 +21,7 @@
     height: 200px;
 }
 
-#numbers-frame .number, #answers-frame .well span {
+#numbers-frame span, #answer-frame .well span {
     display: inline-block;
     margin: 0.5em;
     background-color: #bbb;
@@ -33,11 +33,15 @@
 }
 
 #numbers-frame .number:hover {
-    background-color: aqua;
+    background-color: mediumseagreen;
 }
 
 #numbers-frame .selected-true{
-    background-color: #e8e8e8;
-    color: #ddd;
+    background-color: #ccc;
+    color: #e8e8e8;
     cursor: not-allowed;
+}
+
+#answer-frame .well span:hover {
+    background-color: aquamarine;
 }
