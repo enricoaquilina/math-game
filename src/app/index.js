@@ -7,12 +7,13 @@ export class App extends React.Component {
         this.state = {
             selectedNumbers: [], 
             noOfStars: (Math.floor(Math.random()*9)+1),
-            redrawsLeft: 5,
+            redrawsLeft: 205,
             correct: null,
             usedNumbers: [],
             currentLevel: 1,
             lives: 3,
-            gameOver: false
+            gameOver: false,
+            messageToShow: ''
         };
     }
     addNumber = (clickedNumber) => {
@@ -47,6 +48,25 @@ export class App extends React.Component {
             })
         }
     }
+    nextRound = (e) => {
+        console.log('here');
+        // this.setState({
+            
+        // })
+    }
+    restartGame = (e) => {
+        this.setState({
+            redrawsLeft: 5,
+            noOfStars: this.generateStars(),
+            usedNumbers: [],
+            selectedNumbers: [],
+            gameOver: false,
+            messageToShow: '',
+            lives: 3,
+            correct: null,
+            currentLevel: 1
+        })
+    }
     wrongAnswer = (e) => {
         if(this.state.lives > 0){
             this.setState({
@@ -61,18 +81,24 @@ export class App extends React.Component {
         return (Math.floor(Math.random()*9)+1);
     }
     nextLevel = (e) => {
-        if(this.usedNumbers.length < 9){
+        if(this.state.usedNumbers.length == 8){
+            this.setState({
+                usedNumbers: this.state.usedNumbers.concat(this.state.selectedNumbers),
+                noOfStars: this.generateStars(),
+                currentLevel: this.state.currentLevel += 1,
+                correct: null,
+                selectedNumbers: [],
+                gameOver: true,
+                messageToShow: 'Done! You are awesome :)'
+            })
+        }
+        if(this.state.usedNumbers.length < 8){
             this.setState({
                 usedNumbers: this.state.usedNumbers.concat(this.state.selectedNumbers),
                 noOfStars: this.generateStars(),
                 currentLevel: this.state.currentLevel += 1,
                 correct: null,
                 selectedNumbers: []
-            })
-        }
-        if(this.usedNumbers.length === 9){
-            this.setState({
-                gameOver: true
             })
         }
         
@@ -83,14 +109,30 @@ export class App extends React.Component {
             correct = this.state.correct,
             currentLevel = this.state.currentLevel,
             lives = this.state.lives,
-            health = [];
+            health = [],
+            gameOver = this.state.gameOver,
+            bottomFrame;
 
         for (var i = 0; i < lives; i++) {
             health.push(
                 <span key={i} className="glyphicon glyphicon-heart"></span>
             )
         }
-
+        if(!gameOver){
+            bottomFrame = (
+                <Numbers selectedNumbers = { this.state.selectedNumbers } 
+                         addNumber = { this.addNumber } 
+                         usedNumbers = { this.state.usedNumbers }
+                         gameOver = { this.state.gameOver } />
+            )
+        }else{
+            bottomFrame = (
+                <Banner gameOver = { this.state.gameOver } 
+                        messageToShow = { this.state.messageToShow } 
+                        nextRound = { this.nextRound } 
+                        restartGame = { this.restartGame } />
+            )
+        }
         return (
             <div id="game">
                 <h2>Algebra 4 Kids</h2>
@@ -102,17 +144,13 @@ export class App extends React.Component {
                             selectedNumbers = { selectedNumbers } 
                             verifyAnswer = { this.verifyAnswer }
                             nextLevel = { this.nextLevel } 
-                            wrongAnswer = { this.wrongAnswer } />
-                    <ReDraw redrawsLeft = { this.state.redrawsLeft } 
-                            redraw={ this.redraw } />
+                            wrongAnswer = { this.wrongAnswer } 
+                            redrawsLeft = { this.state.redrawsLeft } 
+                            redraw = { this.redraw } />
                     <Answer selectedNumbers = { this.state.selectedNumbers } 
-                            removeNumber={ this.removeNumber } />
+                            removeNumber = { this.removeNumber } />
                 </div>
-                <Numbers selectedNumbers = { this.state.selectedNumbers } 
-                         addNumber = { this.addNumber } 
-                         usedNumbers = { this.state.usedNumbers }
-                         gameOver = { this.state.gameOver } />
-                <Banner gameOver = { this.state.gameOver } />
+                {bottomFrame}
             </div>
         );
     }
@@ -147,14 +185,18 @@ class Button extends React.Component {
     }
     render() {
         var button,
-            disabled,
+            numberDisabled, redrawDisabled,
             correct = this.props.correct,
             verifyAnswer = this.props.verifyAnswer,
             selectedNumbers = this.props.selectedNumbers,
             nextLevel = this.props.nextLevel,
-            wrongAnswer = this.props.wrongAnswer;
+            wrongAnswer = this.props.wrongAnswer,
+            redrawsLeft = this.props.redrawsLeft,
+            redraw = this.props.redraw;
 
-        disabled = (selectedNumbers.length === 0);
+        numberDisabled = (selectedNumbers.length === 0);
+
+        redrawDisabled = (redrawsLeft === 0);
 
         switch(correct) {
             case true:
@@ -175,7 +217,7 @@ class Button extends React.Component {
                 break;
             default:
                 button = (
-                    <button className="btn btn-primary" onClick={ verifyAnswer } disabled = { disabled }>
+                    <button className="btn btn-primary" onClick={ verifyAnswer } disabled = { numberDisabled }>
                     =
                     </button>
                 )
@@ -185,22 +227,31 @@ class Button extends React.Component {
         return (
             <div id="button-frame">
                 {button}
+                <br/>
+                <br/>
+                <span className="glyphicon glyphicon-refresh btn btn-warning" onClick={ redraw.bind() } disabled = { redrawDisabled }>
+                    {redrawsLeft}
+                </span>
             </div>
         );
     }
 }
 
-class ReDraw extends React.Component {
+class Banner extends React.Component {
     constructor() {
         super();
     }
     render() {
-        var redrawsLeft = this.props.redrawsLeft,
-            redraw = this.props.redraw;
+        var messageToShow = this.props.messageToShow,
+            gameOver = this.props.gameOver,
+            nextRound = this.props.nextRound,
+            restartGame = this.props.restartGame;
 
         return (
-            <div id="redraw-frame">
-                <span className="glyphicon glyphicon-refresh btn btn-warning" onClick={ redraw.bind() }>{redrawsLeft}</span>
+            <div id="banner-frame" className = "well text-center">
+                <h2>{ messageToShow }</h2>
+                <button className="btn btn-lg btn-success" onClick = { nextRound }>Continue</button>
+                <button className="btn btn-lg btn-success" onClick = { restartGame }>Restart</button>                
             </div>
         );
     }
@@ -241,7 +292,8 @@ class Numbers extends React.Component {
             className = "", 
             selectedNos = this.props.selectedNumbers,
             usedNumbers = this.props.usedNumbers,
-            addNumber = this.props.addNumber;
+            addNumber = this.props.addNumber,
+            gameOver = this.props.gameOver;
 
         for (var i = 1; i < 10; i++) {
             var used = (selectedNos.indexOf(i)>=0) || (usedNumbers.indexOf(i)>=0);
@@ -252,7 +304,7 @@ class Numbers extends React.Component {
         }
 
         return (
-            <div id="numbers-frame" className="well">
+            <div id="numbers-frame" className="well" disabled = { gameOver }>
                 {nos}
             </div>
         );
