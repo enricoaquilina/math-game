@@ -14,7 +14,10 @@
     text-align:center;
     margin-top: 70px;
 }
-
+#start-frame {
+    width: 100%;
+    text-align:center;
+}
 #stars-frame .well, 
 #answer-frame .well, 
 #numbers-frame .well {

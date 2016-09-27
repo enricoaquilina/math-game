@@ -7,13 +7,17 @@ export class App extends React.Component {
         this.state = {
             selectedNumbers: [], 
             noOfStars: (Math.floor(Math.random()*9)+1),
-            redrawsLeft: 205,
+            redrawsLeft: 5,
             correct: null,
             usedNumbers: [],
             currentLevel: 1,
             lives: 3,
             gameOver: false,
-            messageToShow: ''
+            gameStarted: false,
+            messageToShow: '',
+            counter: 0,
+            timeFormatted: '',
+            intervalId: 0
         };
     }
     addNumber = (clickedNumber) => {
@@ -48,12 +52,6 @@ export class App extends React.Component {
             })
         }
     }
-    nextRound = (e) => {
-        console.log('here');
-        // this.setState({
-            
-        // })
-    }
     restartGame = (e) => {
         this.setState({
             redrawsLeft: 5,
@@ -64,8 +62,12 @@ export class App extends React.Component {
             messageToShow: '',
             lives: 3,
             correct: null,
-            currentLevel: 1
+            currentLevel: 1,
+            timeFormatted: '',
+            counter: 0,
+            gameStarted: true
         })
+        this.startCtr();
     }
     wrongAnswer = (e) => {
         if(this.state.lives > 0){
@@ -80,16 +82,49 @@ export class App extends React.Component {
     generateStars = (e) => {
         return (Math.floor(Math.random()*9)+1);
     }
+    calcHours = (e) => {
+        return Math.floor(this.state.counter / 3600);
+    }
+    calcMinutes = (e) => {
+        return Math.floor(this.state.counter / 60);
+    }
+    calcSeconds = (e) => {
+        return this.state.counter % 60;
+    }
+    padLeft = (string, pad, length) => {
+        return (new Array(length+1).join(pad)+string).slice(-length);
+    }
+    incrementCtrAndFormatTime = (e) => {
+        this.setState({
+            counter: this.state.counter+1,
+            timeFormatted:  this.padLeft(this.calcHours(), '0', 2) + ':' + 
+                            this.padLeft(this.calcMinutes(), '0', 2) + ':' + 
+                            this.padLeft(this.calcSeconds(), '0', 2)
+        })
+    }
+    startCtr = (e) => {
+        return setInterval(this.incrementCtrAndFormatTime, 1000)
+    }
+    startGame = (e) => {
+        this.setState({
+            gameStarted: true,
+            intervalId: this.startCtr()
+        })
+    }
     nextLevel = (e) => {
         if(this.state.usedNumbers.length == 8){
             this.setState({
+                messageToShow: 'Done! Time taken: ' + this.state.timeFormatted,
+                intervalId: clearInterval(this.state.intervalId),
                 usedNumbers: this.state.usedNumbers.concat(this.state.selectedNumbers),
                 noOfStars: this.generateStars(),
                 currentLevel: this.state.currentLevel += 1,
                 correct: null,
                 selectedNumbers: [],
                 gameOver: true,
-                messageToShow: 'Done! You are awesome :)'
+                counter: 0,
+                timeFormatted: '',
+                gameStarted: false
             })
         }
         if(this.state.usedNumbers.length < 8){
@@ -109,46 +144,65 @@ export class App extends React.Component {
             correct = this.state.correct,
             currentLevel = this.state.currentLevel,
             lives = this.state.lives,
+            counter = this.state.counter,
+            timeFormatted = this.state.timeFormatted,
             health = [],
             gameOver = this.state.gameOver,
-            bottomFrame;
+            gameStarted = this.state.gameStarted,
+            bottomFrame, midFrame;
 
         for (var i = 0; i < lives; i++) {
             health.push(
                 <span key={i} className="glyphicon glyphicon-heart"></span>
             )
         }
-        if(!gameOver){
+        if(!gameOver && gameStarted){
             bottomFrame = (
                 <Numbers selectedNumbers = { this.state.selectedNumbers } 
                          addNumber = { this.addNumber } 
                          usedNumbers = { this.state.usedNumbers }
                          gameOver = { this.state.gameOver } />
             )
-        }else{
+        }else if(gameOver && !gameStarted){
             bottomFrame = (
                 <Banner gameOver = { this.state.gameOver } 
                         messageToShow = { this.state.messageToShow } 
-                        nextRound = { this.nextRound } 
                         restartGame = { this.restartGame } />
+            )
+        }
+        if(!gameStarted && !gameOver){
+            midFrame = (
+                <Start startGame = { this.startGame }/>
+            )
+        }else{
+            midFrame = (
+                <div>
+                    <Star noOfStars = { noOfStars } />
+                    <div>
+                        <Button correct = { correct } 
+                                selectedNumbers = { selectedNumbers } 
+                                verifyAnswer = { this.verifyAnswer }
+                                nextLevel = { this.nextLevel } 
+                                wrongAnswer = { this.wrongAnswer } 
+                                redrawsLeft = { this.state.redrawsLeft } 
+                                redraw = { this.redraw } />
+                            <div>
+                                <Answer selectedNumbers = { this.state.selectedNumbers } 
+                                removeNumber = { this.removeNumber } />
+                            </div>
+                    </div>
+                </div>
             )
         }
         return (
             <div id="game">
                 <h2>Algebra 4 Kids</h2>
                 Level {currentLevel} | Lives: {health}
+                <br/>
+                Time: {timeFormatted}
                 <hr/>
                 <div className="clearfix">
-                    <Star noOfStars = { noOfStars } />
-                    <Button correct = { correct } 
-                            selectedNumbers = { selectedNumbers } 
-                            verifyAnswer = { this.verifyAnswer }
-                            nextLevel = { this.nextLevel } 
-                            wrongAnswer = { this.wrongAnswer } 
-                            redrawsLeft = { this.state.redrawsLeft } 
-                            redraw = { this.redraw } />
-                    <Answer selectedNumbers = { this.state.selectedNumbers } 
-                            removeNumber = { this.removeNumber } />
+                    {midFrame}
                 </div>
                 {bottomFrame}
             </div>
@@ -178,7 +232,24 @@ class Star extends React.Component {
         );
     }
 }
+class Start extends React.Component {
+    constructor() {
+        super();
+    }
+    render() {
+        var startGame = this.props.startGame;
 
+        return (
+            <div id="start-frame" className="well">
+                Good luck and enjoy the game!
+                <br/>
+                <button className="btn btn-success" onClick = { startGame }>
+                    Start!
+                </button>
+            </div>
+        );
+    }
+}
 class Button extends React.Component {
     constructor() {
         super();
@@ -250,7 +321,6 @@ class Banner extends React.Component {
         return (
             <div id="banner-frame" className = "well text-center">
                 <h2>{ messageToShow }</h2>
-                <button className="btn btn-lg btn-success" onClick = { nextRound }>Continue</button>
                 <button className="btn btn-lg btn-success" onClick = { restartGame }>Restart</button>                
             </div>
         );
