@@ -10,7 +10,7 @@ export class Start extends React.Component {
 
         return (
             <div id="start-frame" className="well">
-                Good luck and enjoy the game!
+                Select a number or numbers which equal to the number of stars shown. Good luck and enjoy the game!
                 <br/>
                 <button className="btn btn-success" onClick = { startGame }>
                     Start!
