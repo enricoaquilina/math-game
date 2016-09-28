@@ -16,7 +16,7 @@ export class App extends React.Component {
         this.state = {
             selectedNumbers: [], 
             noOfStars: this.generateStars(),
-            redrawsLeft: 205,
+            redrawsLeft: 5,
             correct: null,
             usedNumbers: [],
             currentLevel: 1,
