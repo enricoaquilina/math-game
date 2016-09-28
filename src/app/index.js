@@ -6,7 +6,7 @@ export class App extends React.Component {
         super();
         this.state = {
             selectedNumbers: [], 
-            noOfStars: (Math.floor(Math.random()*9)+1),
+            noOfStars: this.generateStars(),
             redrawsLeft: 5,
             correct: null,
             usedNumbers: [],
@@ -49,7 +49,7 @@ export class App extends React.Component {
             this.setState({
                 redrawsLeft: this.state.redrawsLeft - 1,
                 noOfStars: this.generateStars()
-            })
+            }, () => this.checkSumAvailability());
         }
     }
     restartGame = (e) => {
@@ -102,6 +102,24 @@ export class App extends React.Component {
                             this.padLeft(this.calcSeconds(), '0', 2)
         })
     }
+    possibleCombinationSum = (arr, n) => {
+        if (arr.indexOf(n) >= 0) { return true; }
+        if (arr[0] > n) { return false; }
+
+        if (arr[arr.length - 1] > n) {
+            arr.pop();
+            return this.possibleCombinationSum(arr, n);
+        }
+        var listSize = arr.length, combinationsCount = (1 << listSize)
+        for (var i = 1; i < combinationsCount ; i++ ) {
+            var combinationSum = 0;
+            for (var j=0 ; j < listSize ; j++) {
+            if (i & (1 << j)) { combinationSum += arr[j]; }
+            }
+            if (n === combinationSum) { return true; }
+        }
+        return false;
+    }
     startCtr = (e) => {
         return setInterval(this.incrementCtrAndFormatTime, 1000)
     }
@@ -111,8 +129,36 @@ export class App extends React.Component {
             intervalId: this.startCtr()
         })
     }
+    checkSumAvailability = (e) => {
+        var redraws = this.state.redrawsLeft,
+            usedNumbers = this.state.usedNumbers,
+            noOfStars = this.state.noOfStars,
+            possibleNumbers = [];
+
+        for (var i = 1; i < 10; i++) {
+            if(usedNumbers.indexOf(i) < 0) {
+                possibleNumbers.push(i);
+            }
+        }
+        
+        if (redraws === 0 && 
+            !this.possibleCombinationSum(possibleNumbers, noOfStars)) {
+            this.setState({
+                messageToShow: 'Game Over!(You did not have a valid combination for the number of stars generated!)',
+                gameOver: true,
+                counter: 0,
+                gameStarted: false,
+                usedNumbers: [],
+                currentLevel: 0,
+                noOfStars: 0,
+                intervalId: clearInterval(this.state.intervalId),
+                correct:null,
+                timeFormatted: ''
+            })
+        }
+    }    
     nextLevel = (e) => {
-        if(this.state.usedNumbers.length == 8){
+        if(this.state.usedNumbers.length == 9) {
             this.setState({
                 messageToShow: 'Done! Time taken: ' + this.state.timeFormatted,
                 intervalId: clearInterval(this.state.intervalId),
@@ -126,15 +172,14 @@ export class App extends React.Component {
                 timeFormatted: '',
                 gameStarted: false
             })
-        }
-        if(this.state.usedNumbers.length < 8){
+        }else {
             this.setState({
                 usedNumbers: this.state.usedNumbers.concat(this.state.selectedNumbers),
                 noOfStars: this.generateStars(),
                 currentLevel: this.state.currentLevel += 1,
                 correct: null,
                 selectedNumbers: []
-            })
+            }, () => this.checkSumAvailability())
         }
         
     }
@@ -174,7 +219,7 @@ export class App extends React.Component {
             midFrame = (
                 <Start startGame = { this.startGame }/>
             )
-        }else{
+        }else if(gameStarted) {
             midFrame = (
                 <div>
                     <Star noOfStars = { noOfStars } />
