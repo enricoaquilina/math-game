@@ -2,20 +2,14 @@
   "name": "mathgame",
   "version": "1.0.0",
   "description": "My first game in react",
-  "main": "./src/index.js",
+  "main": "index.js",
   "scripts": {
-    "build": "NODE_ENV=production webpack --config ./webpack.prod.config.js --progress --colors",
-    "start": "node app.js"
+    "start": "npm run build",
+    "build": "webpack -d && cp src/index.html dist/index.html && webpack-dev-server --content-base src/ --inline --watch --port 4200",
+    "build:prod": "webpack -p && cp src/index.html dist/index.html --port 4200"
   },
-  "author": "Enrico Aquilina",
+  "author": "",
   "license": "ISC",
-  "keywords": [
-    "react",
-    "express",
-    "webpack",
-    "es2016",
-    "javascript"
-  ],
   "dependencies": {
     "bootstrap": "^3.3.7",
     "express": "^4.14.0",
