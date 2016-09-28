@@ -16,7 +16,7 @@ export class App extends React.Component {
         this.state = {
             selectedNumbers: [], 
             noOfStars: this.generateStars(),
-            redrawsLeft: 5,
+            redrawsLeft: 205,
             correct: null,
             usedNumbers: [],
             currentLevel: 1,
@@ -154,20 +154,21 @@ export class App extends React.Component {
             !this.possibleCombinationSum(possibleNumbers, noOfStars)) {
             this.setState({
                 messageToShow: 'Game Over!(You did not have a valid combination for the number of stars generated!)',
+                intervalId: clearInterval(this.state.intervalId),
+                usedNumbers: [],
+                selectedNumbers: [],
                 gameOver: true,
                 counter: 0,
                 gameStarted: false,
-                usedNumbers: [],
                 currentLevel: 0,
                 noOfStars: 0,
-                intervalId: clearInterval(this.state.intervalId),
                 correct:null,
                 timeFormatted: ''
             })
         }
     }    
     nextLevel = (e) => {
-        if(this.state.usedNumbers.length == 9) {
+        if(this.state.usedNumbers.length == 8) {
             this.setState({
                 messageToShow: 'Done! Time taken: ' + this.state.timeFormatted,
                 intervalId: clearInterval(this.state.intervalId),
